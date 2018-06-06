@@ -14,7 +14,8 @@ const inspection = (state = {
   attributes: [],
   "event-count-buckets": [],
   "distinct-user-count": 0,
-  lastUpdated: ''
+  lastUpdated: '',
+  id: ''
 }, action) => {
   const { type, payload } = action;
   switch (type) {
@@ -26,7 +27,8 @@ const inspection = (state = {
           const lastUpdated = pixelLoads[pixelLoads.length - 1][0];
           return {
             ...payload.data,
-            lastUpdated: moment.unix(new Date(lastUpdated)).format("lll")
+            lastUpdated: moment.unix(new Date(lastUpdated)).format("lll"),
+            id: action.meta.id
           }
         }
       });
@@ -35,9 +37,26 @@ const inspection = (state = {
   }
 };
 
+const inspectionsList = (state = [], action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case "FETCH_INSPECTIONS_LIST":
+      return handle(state, action, { success: () => {
+          const { data } = payload;
+          // TODO: update when inspections list is scoped
+          return data.tracking[action.meta.pixelID];
+        } });
+
+    default:
+      return state;
+  }
+};
+
 const ui = (state = {
   isLoading: true,
-  selectedChart: 0
+  selectedChart: 0,
+  pixelID: '',
+  inspectionID: ''
 }, action) => {
   const { type } = action;
   switch (type) {
@@ -55,13 +74,22 @@ const ui = (state = {
         ...state,
         selectedChart: action.attrId,
       };
+    case "SET_PIXEL_ID":
+      return {...state, pixelID: action.pixelID};
+    case "SET_INSPECTION_ID":
+      return { ...state, inspectionID: action.inspectionID };
+    case "SET_LOADING":
+      return { ...state, isLoading: action.isLoading};
     default:
       return state;
   }
 };
 
+
+
 const rootReducer = combineReducers({
   inspection,
+  inspectionsList,
   ui
 });
 

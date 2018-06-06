@@ -6,12 +6,19 @@ import styled from "react-emotion";
 import './App.css';
 
 import { Dimmer, Loader } from "semantic-ui-react";
+import queryString from "query-string";
 
 import StatsHeader from './components/StatsHeader';
 import Charts from './components/Charts';
 import Controls from "./components/Controls";
 
-import { loadInspection } from "./actions";
+import {
+  setInspectionID,
+  loadInspection,
+  setPixelID,
+  loadInspectionsList,
+  setLoading
+} from "./actions";
 
 const StContainer = styled("div")`
   width: 100vw;
@@ -33,42 +40,88 @@ const MyLoader = ({isLoading}) => {
 }
 
 class App extends Component {
-
   componentDidMount() {
-    this.loadInspection();
+    this.setInspectionID();
+    this.setPixelID();
+
+    requestAnimationFrame(() => {
+      this.loadInspectionLoop();
+      this.loadInspectionsList();
+    })
+  }
+
+  componentDidUpdate(nextProps) {
+    const { setLoading } = this.props;
+    if (this.props.inspectionID && nextProps.inspectionID && this.props.inspectionID !== nextProps.inspectionID) {
+      setLoading(true)
+    }
+  }
+
+  setPixelID() {
+    const { setPixelID, match } = this.props;
+    const pixelID = queryString.parse(this.props.location.search).pixel_id;
+
+    setPixelID(pixelID);
+  }
+
+  setInspectionID() {
+    const { setInspectionID, match } = this.props;
+    const inspectionID = match.params.id;
+
+    setInspectionID(inspectionID);
+  }
+
+  loadInspectionLoop() {
+    setInterval(() => this.loadInspection(), 5000);
   }
 
   loadInspection() {
-    const {loadInspection, match} = this.props;
-    setInterval(() => loadInspection(match.params.id), 5000)
+    const { loadInspection, inspectionID } = this.props;
+    loadInspection(inspectionID);
+  }
+
+  loadInspectionsList() {
+    const { loadInspectionsList, pixelID, match } = this.props;
+    loadInspectionsList(pixelID);
   }
 
   render() {
-    const {inspection, isLoading} = this.props;
+    const { inspection, isLoading, inspectionsList } = this.props;
     const attributes = selectAttributes(inspection.attributes);
 
-    return <div className="App">
-        <MyLoader isLoading={isLoading}/>
-
+    return (
+      <div className="App">
+        <MyLoader isLoading={isLoading} />
         <StContainer>
-          <StatsHeader inspection={inspection}/>
-          <Controls attributes={attributes}/>
-          <Charts loads={inspection["event-count-buckets"]} attributes={attributes}/>
-         </StContainer>
-      </div>;
+          <StatsHeader inspection={inspection} />
+          <Controls attributes={attributes} />
+          <Charts
+            loads={inspection["event-count-buckets"]}
+            attributes={attributes}
+          />
+        </StContainer>
+      </div>
+    );
   }
 }
 
 const mapStateToProps = state => {
   return {
     inspection: state.inspection,
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
+    inspectionsList: state.inspectionsList,
+    pixelID: state.ui.pixelID,
+    inspectionID: state.ui.inspectionID
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
-    loadInspection: loadInspection
+    loadInspectionsList: loadInspectionsList,
+    loadInspection: loadInspection,
+    setPixelID: setPixelID,
+    setInspectionID: setInspectionID,
+    setLoading: setLoading
   }, dispatch);
 };
 
