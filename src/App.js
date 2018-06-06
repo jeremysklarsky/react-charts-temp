@@ -5,6 +5,8 @@ import styled from "react-emotion";
 
 import './App.css';
 
+import { Dimmer, Loader } from "semantic-ui-react";
+
 import StatsHeader from './components/StatsHeader';
 import Charts from './components/Charts';
 import Controls from "./components/Controls";
@@ -24,6 +26,12 @@ const selectAttributes = attributes => {
   return attributes.filter(attribute => attribute.stats);
 };
 
+const MyLoader = ({isLoading}) => {
+  return <Dimmer active={isLoading}>
+    <Loader>Loading...</Loader>
+  </Dimmer>
+}
+
 class App extends Component {
 
   componentDidMount() {
@@ -36,10 +44,12 @@ class App extends Component {
   }
 
   render() {
-    const {inspection} = this.props;
+    const {inspection, isLoading} = this.props;
     const attributes = selectAttributes(inspection.attributes);
-    
+
     return <div className="App">
+        <MyLoader isLoading={isLoading}/>
+
         <StContainer>
           <StatsHeader inspection={inspection}/>
           <Controls attributes={attributes}/>
@@ -51,7 +61,8 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    inspection: state.inspection
+    inspection: state.inspection,
+    isLoading: state.ui.isLoading
   };
 };
 

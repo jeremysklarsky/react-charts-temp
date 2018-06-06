@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import { handle } from "redux-pack";
+import moment from "moment";
 
 const inspection = (state = {
   pixel: {
@@ -12,14 +13,21 @@ const inspection = (state = {
   },
   attributes: [],
   "event-count-buckets": [],
-  "distinct-user-count": 0
+  "distinct-user-count": 0,
+  lastUpdated: ''
 }, action) => {
   const { type, payload } = action;
   switch (type) {
     case "FETCH_INSPECTION":
       return handle(state, action, {
         success: () => {
-          return payload.data;
+          const {data} = payload;
+          const pixelLoads = data["event-count-buckets"];
+          const lastUpdated = pixelLoads[pixelLoads.length - 1][0];
+          return {
+            ...payload.data,
+            lastUpdated: moment.unix(new Date(lastUpdated)).format("lll")
+          }
         }
       });
     default:
@@ -27,19 +35,34 @@ const inspection = (state = {
   }
 };
 
-const selectedChart = (state = 0, action) => {
+const ui = (state = {
+  isLoading: true,
+  selectedChart: 0
+}, action) => {
   const { type } = action;
   switch (type) {
+    case "FETCH_INSPECTION":
+      return handle(state, action, {
+        success: () => {
+          return {
+            ...state,
+            isLoading: false
+          };
+        }
+      });
     case "SELECT_CHART":
-      return action.attrId;
+      return { 
+        ...state,
+        selectedChart: action.attrId,
+      };
     default:
-      return state
+      return state;
   }
 };
 
 const rootReducer = combineReducers({
   inspection,
-  selectedChart
+  ui
 });
 
 export default rootReducer;

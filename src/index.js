@@ -3,6 +3,8 @@ import { render } from "react-dom";
 
 import './index.css';
 import "semantic-ui-css/semantic.min.css";
+import "odometer/themes/odometer-theme-default.css";
+
 import "react-vis/dist/style.css";
 
 import App from './App';

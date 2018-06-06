@@ -51,7 +51,7 @@ class Controls extends Component {
 }
 
 const mapStateToProps = state => {
-  return { selectedChart: state.selectedChart };
+  return { selectedChart: state.ui.selectedChart };
 };
 
 const mapDispatchToProps = dispatch => {
