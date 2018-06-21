@@ -20,3 +20,7 @@
 .App-intro {
   font-size: large;
 }
+
+.dimmed.dimmable > .ui.modals.dimmer.visible {
+  display: flex !important;
+}

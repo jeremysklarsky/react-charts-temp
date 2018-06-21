@@ -2,76 +2,96 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Dropdown } from "semantic-ui-react";
-import {
-  selectChart,
-  setInspectionID
-} from "../actions";
-
+import { Dropdown, Menu, Button } from "semantic-ui-react";
+import { selectChart, setInspectionID, createNewInspection, loadInspectionsList } from "../actions";
+import { menuItems, activeInspections } from "../reducers";
+import FiltersModal from "./FiltersModal";
 import { withRouter} from "react-router-dom";
-
-const style = {
-  "width": "48%",
-  "margin": "10px"
-};
 
 class Controls extends Component {
 
   state = { searchQuery: "" };
 
+  createNewInspection() {
+    const { pixelID, sessionID } = this.props;
+    this.props.createNewInspection(pixelID, sessionID).then(() => {
+      this.props.loadInspectionsList(pixelID);
+    });
+  }
+
   handleChange = (e, { searchQuery, value }) => {
     this.setState({ searchQuery, value });
-    
     this.props.selectChart(value)
   }
 
   handleSearchChange = (e, { searchQuery }) => this.setState({ searchQuery });
 
   handleInspectionChange = (e, {value}) => {
-    this.props.history.push(`${value}?pixel_id=${this.props.pixelID}`);
-    this.props.setInspectionID(value);
+    // setLoading <-- anti-pattern!
+    if (value !== this.props.inspectionID) {
+      // Dropdown fires change event even if you reselect current selection
+      this.props.setInspectionID(value);
+    }
   }
 
   render() {
     const { searchQuery, value } = this.state;
-    const { attributes, inspectionsList, inspection, inspectionID } = this.props;
-    const menuItems = attributes.map((attr, i) => {
-      return { key: i, text: `${attr.name} - ${attr.key}`, value: attr.id };
-    })
-
-    const activeInspections = inspectionsList.map((inpsection, i) => {
-      return { key: i, text: inpsection.uuid, value: inpsection.uuid };
-    })
-
-    const pixelEventLoads = {
-      key: menuItems.length + 1,
-      text: "Pixel Event Loads",
-      value: 0
-    }
-
-    menuItems.unshift(pixelEventLoads);
+    const { menuItems, attributes, inspectionID, activeInspections } = this.props;
 
     return <div className="controls">
-        <Dropdown style={style} onChange={this.handleChange} onSearchChange={this.handleSearchChange} options={menuItems} placeholder="Select Attributes" search searchQuery={searchQuery} selection value={value} />
-        <Dropdown style={style} onChange={this.handleInspectionChange.bind(this)} options={activeInspections} placeholder="Active Inpsections" selection value={inspectionID}/>
-      </div>;
+      <Menu fluid>
+        <Menu.Item>
+          <Dropdown 
+          onChange={this.handleInspectionChange.bind(this)} 
+          options={activeInspections} 
+          placeholder="Active Inpsections" 
+          value={inspectionID}
+          selection
+        />
+        </Menu.Item>
+
+        <Menu.Item>
+          <Dropdown 
+          onChange={this.handleChange} 
+          onSearchChange={this.handleSearchChange} 
+          options={menuItems} 
+          placeholder="Select Attributes" search 
+          searchQuery={searchQuery} selection 
+          value={value}
+        />
+        </Menu.Item>
+
+        <Menu.Item>
+          <FiltersModal/>
+        </Menu.Item>
+
+        <Menu.Item>
+          <Button content='Create New Inspection' onClick={this.createNewInspection.bind(this)}/>
+        </Menu.Item>
+
+      </Menu>
+    </div>;
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
     pixelID: state.ui.pixelID,
     selectedChart: state.ui.selectedChart,
-    inspectionsList: state.inspectionsList,
     inspection: state.inspection,
-    inspectionID: state.ui.inspectionID
+    inspectionID: state.ui.inspectionID,
+    sessionID: state.meta.sessionID,
+    menuItems: menuItems(ownProps.attributes),
+    activeInspections: activeInspections(state)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     selectChart: selectChart,
-    setInspectionID: setInspectionID    
+    setInspectionID: setInspectionID,
+    createNewInspection: createNewInspection,
+    loadInspectionsList: loadInspectionsList
   }, dispatch);
 };
 

@@ -17,7 +17,8 @@ import {
   loadInspection,
   setPixelID,
   loadInspectionsList,
-  setLoading
+  setSessionID,
+  fetchSessionID
 } from "./actions";
 
 const StContainer = styled("div")`
@@ -41,27 +42,27 @@ const MyLoader = ({isLoading}) => {
 
 class App extends Component {
   componentDidMount() {
-    this.setInspectionID();
     this.setPixelID();
-
+    
     requestAnimationFrame(() => {
-      this.loadInspectionLoop();
+      this.setSessionID();
       this.loadInspectionsList();
+      this.loadInspectionLoop();
     })
-  }
-
-  componentDidUpdate(nextProps) {
-    const { setLoading } = this.props;
-    if (this.props.inspectionID && nextProps.inspectionID && this.props.inspectionID !== nextProps.inspectionID) {
-      setLoading(true)
-    }
   }
 
   setPixelID() {
     const { setPixelID, match } = this.props;
-    const pixelID = queryString.parse(this.props.location.search).pixel_id;
+    const pixelID = match.params.pixel_id;
 
     setPixelID(pixelID);
+  }
+
+  setSessionID() {
+    const { setSessionID, location } = this.props;
+    const sessionID = queryString.parse(location.search).session_id;
+
+    setSessionID(sessionID)
   }
 
   setInspectionID() {
@@ -76,17 +77,20 @@ class App extends Component {
   }
 
   loadInspection() {
-    const { loadInspection, inspectionID } = this.props;
-    loadInspection(inspectionID);
+    const { loadInspection, inspectionID, shouldFetch } = this.props;
+
+    if (inspectionID && shouldFetch) {
+      loadInspection(inspectionID);
+    }
   }
 
   loadInspectionsList() {
-    const { loadInspectionsList, pixelID, match } = this.props;
+    const { loadInspectionsList, pixelID } = this.props;
     loadInspectionsList(pixelID);
   }
 
   render() {
-    const { inspection, isLoading, inspectionsList } = this.props;
+    const { inspection, isLoading } = this.props;
     const attributes = selectAttributes(inspection.attributes);
 
     return (
@@ -111,7 +115,8 @@ const mapStateToProps = state => {
     isLoading: state.ui.isLoading,
     inspectionsList: state.inspectionsList,
     pixelID: state.ui.pixelID,
-    inspectionID: state.ui.inspectionID
+    inspectionID: state.ui.inspectionID,
+    shouldFetch: state.ui.shouldFetch
   };
 };
 
@@ -121,7 +126,8 @@ const mapDispatchToProps = dispatch => {
     loadInspection: loadInspection,
     setPixelID: setPixelID,
     setInspectionID: setInspectionID,
-    setLoading: setLoading
+    setSessionID: setSessionID,
+    fetchSessionID: fetchSessionID
   }, dispatch);
 };
 

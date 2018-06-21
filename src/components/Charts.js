@@ -15,7 +15,7 @@ class Charts extends Component {
     const {attributes, loads, selectedChart } = this.props;
     const chartContainer = selectedChart === 0 ? 
       <PixelChartContainer style={style} title="Pixel Event Loads" data={loads} /> :
-      <AttributeChartContainer data={attributes} attribute_id={selectedChart}/>
+      <AttributeChartContainer attribute_id={selectedChart} data={attributes} />
 
     return (<div className="Charts">
         {chartContainer}

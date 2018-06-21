@@ -5,8 +5,6 @@ import './index.css';
 import "semantic-ui-css/semantic.min.css";
 import "odometer/themes/odometer-theme-default.css";
 
-import "react-vis/dist/style.css";
-
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -22,7 +20,7 @@ const store = createStore(rootReducer, applyMiddleware(reduxPackMiddleware));
 render(
   <Provider store={store}>  
     <Router>
-      <Route path="/:id" component={App} /> 
+      <Route path="/:pixel_id" component={App} /> 
     </Router>
   </Provider>,
   document.getElementById("root")
