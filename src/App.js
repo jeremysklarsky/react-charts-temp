@@ -9,8 +9,9 @@ import { Dimmer, Loader } from "semantic-ui-react";
 import queryString from "query-string";
 
 import StatsHeader from './components/StatsHeader';
-import Charts from './components/Charts';
 import Controls from "./components/Controls";
+import Module from "./components/Module";
+
 
 import {
   setInspectionID,
@@ -90,19 +91,16 @@ class App extends Component {
   }
 
   render() {
-    const { inspection, isLoading } = this.props;
+    const { inspection, isLoading, pixelID, selectedModule } = this.props;
     const attributes = selectAttributes(inspection.attributes);
 
     return (
       <div className="App">
         <MyLoader isLoading={isLoading} />
         <StContainer>
-          <StatsHeader inspection={inspection} />
+          <StatsHeader pixelID={pixelID} inspection={inspection} />
           <Controls attributes={attributes} />
-          <Charts
-            loads={inspection["event-count-buckets"]}
-            attributes={attributes}
-          />
+          <Module inspection={inspection} attributes={attributes} selectedModule={selectedModule}/>
         </StContainer>
       </div>
     );
@@ -115,6 +113,7 @@ const mapStateToProps = state => {
     isLoading: state.ui.isLoading,
     inspectionsList: state.inspectionsList,
     pixelID: state.ui.pixelID,
+    selectedModule: state.ui.selectedModule,
     inspectionID: state.ui.inspectionID,
     shouldFetch: state.ui.shouldFetch
   };

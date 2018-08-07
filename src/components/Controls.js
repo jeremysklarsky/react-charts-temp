@@ -5,12 +5,9 @@ import { bindActionCreators } from "redux";
 import { Dropdown, Menu, Button } from "semantic-ui-react";
 import { selectChart, setInspectionID, createNewInspection, loadInspectionsList } from "../actions";
 import { menuItems, activeInspections } from "../reducers";
-import FiltersModal from "./FiltersModal";
 import { withRouter} from "react-router-dom";
 
 class Controls extends Component {
-
-  state = { searchQuery: "" };
 
   createNewInspection() {
     const { pixelID, sessionID } = this.props;
@@ -35,8 +32,7 @@ class Controls extends Component {
   }
 
   render() {
-    const { searchQuery, value } = this.state;
-    const { menuItems, attributes, inspectionID, activeInspections } = this.props;
+    const { inspectionID, activeInspections } = this.props;
 
     return <div className="controls">
       <Menu fluid>
@@ -44,25 +40,10 @@ class Controls extends Component {
           <Dropdown 
           onChange={this.handleInspectionChange.bind(this)} 
           options={activeInspections} 
-          placeholder="Active Inpsections" 
+          placeholder="Select Previous Inspections" 
           value={inspectionID}
           selection
         />
-        </Menu.Item>
-
-        <Menu.Item>
-          <Dropdown 
-          onChange={this.handleChange} 
-          onSearchChange={this.handleSearchChange} 
-          options={menuItems} 
-          placeholder="Select Attributes" search 
-          searchQuery={searchQuery} selection 
-          value={value}
-        />
-        </Menu.Item>
-
-        <Menu.Item>
-          <FiltersModal/>
         </Menu.Item>
 
         <Menu.Item>

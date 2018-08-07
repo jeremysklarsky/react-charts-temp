@@ -7,9 +7,8 @@ const inspectionsList = (state = [], action) => {
       return handle(state, action, { success: () => {
           const { data } = payload;
           // TODO: update when inspections list is scoped
-          return data.tracking[action.meta.pixelID];
+          return data.tracking[action.meta.pixelID] || [];
         } });
-
     default:
       return state;
   }

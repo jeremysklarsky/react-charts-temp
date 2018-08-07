@@ -26,10 +26,12 @@ const inspection = (state = {
       return handle(state, action, {
         success: () => {
           const {data} = payload;
-          const pixelLoads = data["event-count-buckets"];
+          const pixelLoads = data["event-count-buckets"].slice(0,500);
           const lastUpdated = pixelLoads.length ? pixelLoads[pixelLoads.length - 1][0] : null;
+
           return {
             ...payload.data,
+            "event-count-buckets": pixelLoads,
             lastUpdated: lastUpdated ? moment.unix(new Date(lastUpdated)).format("lll"): "N/A",
             id: action.meta.id
           }

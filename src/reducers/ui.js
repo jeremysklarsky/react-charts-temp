@@ -6,7 +6,8 @@ const ui = (state = {
   pixelID: '',
   inspectionID: '',
   shouldFetch: true,
-  fetchedFilters: []
+  fetchedFilters: [],
+  selectedModule: 'Event Loads'
 }, action) => {
   const { type, payload } = action;
   switch (type) {
@@ -26,6 +27,11 @@ const ui = (state = {
         ...state,
         selectedChart: action.attrId,
       };
+    case "SELECT_MODULE":
+      return {
+        ...state,
+        selectedModule: action.module,
+      };      
     case "SET_PIXEL_ID":
       return {...state, pixelID: action.pixelID};
     case "SET_INSPECTION_ID":
@@ -38,7 +44,8 @@ const ui = (state = {
       return handle(state, action, {
         success: () => {
           const { data } = payload;
-          return { ...state, inspectionID: data.tracking[action.meta.pixelID][0].uuid };          
+          const inspections = data.tracking[action.meta.pixelID]; 
+          return { ...state, inspectionID: inspections ? inspections[0].uuid : '' };          
         }
       });
     case "CREATE_INSPECTION":

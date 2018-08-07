@@ -1,4 +1,5 @@
 import $ from "jquery";
+import _ from "lodash";
 
 export const setPixelID = pixelID => {
   return { type: "SET_PIXEL_ID", pixelID }; 
@@ -30,6 +31,10 @@ export const selectChart = attrId => {
 
 export const selectChartType = chartType => {
   return { type: "SELECT_CHART_TYPE", chartType };
+};
+
+export const selectModule = module => {
+  return { type: "SELECT_MODULE", module };
 };
 
 export const createNewInspection = (pixelID, sessionID, filters) => {
