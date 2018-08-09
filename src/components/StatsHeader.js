@@ -87,7 +87,7 @@ class StatsHeader extends Component {
 
   loadInspectionsList = _.debounce((pixelID) => {
     this.props.loadInspectionsList(pixelID);
-  }, 1000);
+  }, 500);
 
   render() {
     const { inspection, pixelID, selectedModule } = this.props;

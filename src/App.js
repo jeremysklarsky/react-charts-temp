@@ -19,7 +19,8 @@ import {
   setPixelID,
   loadInspectionsList,
   setSessionID,
-  fetchSessionID
+  fetchSessionID,
+  resetUI
 } from "./actions";
 
 const StContainer = styled("div")`
@@ -78,10 +79,15 @@ class App extends Component {
   }
 
   loadInspection() {
-    const { loadInspection, inspectionID, shouldFetch } = this.props;
+    const { loadInspection, inspectionID, shouldFetch, pixelID, resetUI } = this.props;
 
-    if (inspectionID && shouldFetch) {
-      loadInspection(inspectionID);
+    if (inspectionID) {
+
+      if (shouldFetch) {
+        loadInspection(inspectionID);
+      }
+    } else {
+      resetUI(pixelID);
     }
   }
 
@@ -126,7 +132,8 @@ const mapDispatchToProps = dispatch => {
     setPixelID: setPixelID,
     setInspectionID: setInspectionID,
     setSessionID: setSessionID,
-    fetchSessionID: fetchSessionID
+    fetchSessionID: fetchSessionID,
+    resetUI: resetUI
   }, dispatch);
 };
 

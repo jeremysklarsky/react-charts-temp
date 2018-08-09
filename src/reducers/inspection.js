@@ -1,13 +1,13 @@
 import { handle } from "redux-pack";
 import moment from "moment";
 
-const inspection = (state = {
+const initialState = {
   pixel: {
     name: '',
     description: ''
   },
   advertiser: {
-    name:''
+    name: ''
   },
   attributes: [],
   "event-count-buckets": [],
@@ -19,7 +19,9 @@ const inspection = (state = {
     "op": '',
     "value": ''
   }]
-}, action) => {
+};
+
+const inspection = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case "FETCH_INSPECTION":

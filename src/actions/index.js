@@ -57,6 +57,10 @@ export const setFetchStatus = (shouldFetch) => {
   return { type: "SET_FETCH_STATUS", shouldFetch};
 }
 
+export const resetUI = (pixelID) => {
+  return { type: "RESET_UI", pixelID };
+}
+
 const fetch_inspection = id => {
   return fetch(`https://api.dev.datasvc.mediamath.com/dmp/v2.0/event_inspector/inspections/${id}`).then(
     response => response.json()

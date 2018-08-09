@@ -3,9 +3,19 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { Dropdown, Menu, Button } from "semantic-ui-react";
-import { selectChart, setInspectionID, createNewInspection, loadInspectionsList } from "../actions";
+import {
+  selectChart,
+  setInspectionID,
+  createNewInspection,
+  loadInspectionsList
+} from "../actions";
 import { menuItems, activeInspections } from "../reducers";
 import { withRouter} from "react-router-dom";
+import { css } from "emotion";
+
+const dropdownClass = css`
+  width: 310px;
+`;
 
 class Controls extends Component {
 
@@ -37,7 +47,8 @@ class Controls extends Component {
     return <div className="controls">
       <Menu fluid>
         <Menu.Item>
-          <Dropdown 
+          <Dropdown
+          className={dropdownClass}
           onChange={this.handleInspectionChange.bind(this)} 
           options={activeInspections} 
           placeholder="Select Previous Inspections" 

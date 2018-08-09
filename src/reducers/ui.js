@@ -1,16 +1,21 @@
 import { handle } from "redux-pack";
 
-const ui = (state = {
+const initialState = {
   isLoading: true,
   selectedChart: 0,
-  pixelID: '',
-  inspectionID: '',
+  pixelID: "",
+  inspectionID: "",
   shouldFetch: true,
   fetchedFilters: [],
-  selectedModule: 'Event Loads'
-}, action) => {
+  selectedModule: "Event Loads"
+};
+
+const ui = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
+    case "RESET_UI": {
+      return {...state, pixelID: action.pixelID, isLoading: false}
+    }
     case "FETCH_INSPECTION":
       return handle(state, action, {
         success: () => {
@@ -44,8 +49,9 @@ const ui = (state = {
       return handle(state, action, {
         success: () => {
           const { data } = payload;
-          const inspections = data.tracking[action.meta.pixelID]; 
-          return { ...state, inspectionID: inspections ? inspections[0].uuid : '' };          
+          const inspections = data.tracking[action.meta.pixelID];
+
+          return { ...state, inspectionID: inspections ? inspections[0].uuid : '', shouldFetch: true, isLoading: true };          
         }
       });
     case "CREATE_INSPECTION":
@@ -63,7 +69,6 @@ const ui = (state = {
           }
         }
       });
-      
     default:
       return state;
   }

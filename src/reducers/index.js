@@ -1,4 +1,6 @@
 import { combineReducers } from "redux";
+import { handle } from "redux-pack";
+
 import filters from "./filters";
 import inspection from "./inspection";
 import inspectionsList from "./inspectionsList";
@@ -36,12 +38,21 @@ export const activeInspections = ({inspectionsList}) => {
   });
 }
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   inspection,
   inspectionsList,
   filters,
   meta,
   ui
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === "RESET_UI") {
+    state = undefined;
+  }
+
+  return appReducer(state, action);
+};
+
 
 export default rootReducer;
