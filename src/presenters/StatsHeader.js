@@ -4,6 +4,7 @@ import logo from "../MediaMath-Logo.svg";
 import styled from "react-emotion";
 import {css} from "emotion";
 import Odometer from "react-odometerjs";
+import PropTypes from "prop-types";
 
 const StCard = ({header, meta, description}) => {
   return <Card>
@@ -111,5 +112,14 @@ const StatsHeader = props => {
     </StStatsHeader>
   );
 };
+
+StatsHeader.propTypes = {
+  inspection: PropTypes.object,
+  pixelID: PropTypes.string,
+  selectedModule: PropTypes.string.isRequired,
+  modules: PropTypes.array.isRequired,
+  handleModuleChange: PropTypes.func.isRequired,
+  handlePixelChange: PropTypes.func.isRequired
+}
 
 export default StatsHeader;

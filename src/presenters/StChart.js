@@ -53,7 +53,7 @@ const StChart = ({ data, dataKey }) => {
 
 StChart.propTypes = {
   data: PropTypes.array.isRequired,
-  dataKey: PropTypes.string.isRequired
+  dataKey: PropTypes.string
 };
 
 

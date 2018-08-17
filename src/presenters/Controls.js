@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropdown, Menu, Button, Icon } from "semantic-ui-react";
 import { css } from "emotion";
+import PropTypes from "prop-types";
 
 const dropdownClass = css`
   width: 310px;
@@ -48,5 +49,14 @@ const Controls = props => {
     </Menu>
   </div>;
 }
+
+Controls.propTypes = {
+  inspectionID: PropTypes.string,
+  activeInspections: PropTypes.array,
+  shouldFetch: PropTypes.bool,
+  toggleFetch: PropTypes.func.isRequired,
+  handleInspectionChange: PropTypes.func.isRequired,
+  createNewInspection: PropTypes.func.isRequired
+};
 
 export default Controls;
