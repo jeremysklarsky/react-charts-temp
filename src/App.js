@@ -8,10 +8,10 @@ import './App.css';
 import { Dimmer, Loader } from "semantic-ui-react";
 import queryString from "query-string";
 
-import StatsHeader from './components/StatsHeader';
-import Controls from "./components/Controls";
-import Module from "./components/Module";
-
+import StatsHeaderContainer from './containers/StatsHeaderContainer';
+import ControlsContainer from "./containers/ControlsContainer";
+import ErrorModalContainer from "./containers/ErrorModalContainer";
+import ModuleContainer from './containers/ModuleContainer';
 
 import {
   setInspectionID,
@@ -19,7 +19,6 @@ import {
   setPixelID,
   loadInspectionsList,
   setSessionID,
-  fetchSessionID,
   resetUI
 } from "./actions";
 
@@ -32,15 +31,21 @@ const StContainer = styled("div")`
   background-color: #f2f4f8;
 `;
 
-const selectAttributes = attributes => {
-  return attributes.filter(attribute => attribute.stats);
+const WrappedLoaderContainer = ({ isLoading }) => {
+  return (
+    <Dimmer className="MyLoader" active={isLoading}>
+      <Loader>Loading...</Loader>
+    </Dimmer>
+  );
 };
 
-const MyLoader = ({isLoading}) => {
-  return <Dimmer active={isLoading}>
-    <Loader>Loading...</Loader>
-  </Dimmer>
-}
+const WrappedErrorContainer = ({ visible }) => {
+  return (
+    <div className="WrappedErrorContainer">
+      {visible && <ErrorModalContainer />}
+    </div>
+  );
+};
 
 class App extends Component {
   componentDidMount() {
@@ -97,17 +102,17 @@ class App extends Component {
   }
 
   render() {
-    const { inspection, isLoading, pixelID, selectedModule } = this.props;
-    const attributes = selectAttributes(inspection.attributes);
+    const { showError, isLoading } = this.props;
 
     return (
       <div className="App">
-        <MyLoader isLoading={isLoading} />
+        <WrappedLoaderContainer isLoading={isLoading} />
         <StContainer>
-          <StatsHeader pixelID={pixelID} inspection={inspection} />
-          <Controls attributes={attributes} />
-          <Module inspection={inspection} attributes={attributes} selectedModule={selectedModule}/>
+          <StatsHeaderContainer />
+          <ControlsContainer />
+          <ModuleContainer />
         </StContainer>
+        <WrappedErrorContainer visible={showError} />
       </div>
     );
   }
@@ -115,13 +120,11 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    inspection: state.inspection,
     isLoading: state.ui.isLoading,
-    inspectionsList: state.inspectionsList,
     pixelID: state.ui.pixelID,
-    selectedModule: state.ui.selectedModule,
     inspectionID: state.ui.inspectionID,
-    shouldFetch: state.ui.shouldFetch
+    shouldFetch: state.ui.shouldFetch,
+    showError: state.ui.showError
   };
 };
 
@@ -132,7 +135,6 @@ const mapDispatchToProps = dispatch => {
     setPixelID: setPixelID,
     setInspectionID: setInspectionID,
     setSessionID: setSessionID,
-    fetchSessionID: fetchSessionID,
     resetUI: resetUI
   }, dispatch);
 };

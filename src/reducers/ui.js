@@ -2,11 +2,9 @@ import { handle } from "redux-pack";
 
 const initialState = {
   isLoading: true,
-  selectedChart: 0,
   pixelID: "",
   inspectionID: "",
   shouldFetch: true,
-  fetchedFilters: [],
   selectedModule: "Event Loads"
 };
 
@@ -19,19 +17,12 @@ const ui = (state = initialState, action) => {
     case "FETCH_INSPECTION":
       return handle(state, action, {
         success: () => {
-          const {data} = payload;
           return {
             ...state,
-            isLoading: false,
-            fetchedFilters: data.filters
+            isLoading: false
           };
         }
       });
-    case "SELECT_CHART":
-      return { 
-        ...state,
-        selectedChart: action.attrId,
-      };
     case "SELECT_MODULE":
       return {
         ...state,
@@ -46,12 +37,15 @@ const ui = (state = initialState, action) => {
     case "SET_FETCH_STATUS":
       return { ...state, shouldFetch: action.shouldFetch};
     case "FETCH_INSPECTIONS_LIST":
-      return handle(state, action, {
+      return handle(state, action, { 
         success: () => {
           const { data } = payload;
           const inspections = data.tracking[action.meta.pixelID];
 
-          return { ...state, inspectionID: inspections ? inspections[0].uuid : '', shouldFetch: true, isLoading: true };          
+          return { ...state, inspectionID: inspections ? inspections[0].uuid : "", shouldFetch: true, isLoading: true };
+        },
+        failure: () => {
+          return { ...state, showError: true };
         }
       });
     case "CREATE_INSPECTION":
@@ -67,8 +61,16 @@ const ui = (state = initialState, action) => {
             ...state,
             inspectionID: action.payload.data.request_id
           }
+        },
+        failure: () => {
+          return {
+            ...state,
+            showError: true
+          }
         }
       });
+    case "DISMISS_ERROR":
+      return {...state, showError: false};
     default:
       return state;
   }

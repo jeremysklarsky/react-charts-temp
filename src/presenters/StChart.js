@@ -9,6 +9,8 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+import PropTypes from "prop-types";
+
 const CustomizedAxisTick = props => {
   const { x, y, payload } = props;
 
@@ -28,7 +30,8 @@ const CustomizedAxisTick = props => {
   );
 };
 
-const StChart = ({ data, dataKey, type}) => {
+const StChart = ({ data, dataKey }) => {
+
   return (
     <ResponsiveContainer width="100%" height={450}>
     <AreaChart data={data}>
@@ -42,10 +45,16 @@ const StChart = ({ data, dataKey, type}) => {
       <YAxis />
       <CartesianGrid strokeDasharray="3 3" />
       <Tooltip />
-      <Area type={type} dataKey={dataKey} stroke="#8884d8" fillOpacity={1} fill="url(#color)" />
+      <Area dataKey={dataKey} stroke="#8884d8" fillOpacity={1} fill="url(#color)" />
     </AreaChart>
     </ResponsiveContainer>
   )
 }
+
+StChart.propTypes = {
+  data: PropTypes.array.isRequired,
+  dataKey: PropTypes.string.isRequired
+};
+
 
 export default StChart;

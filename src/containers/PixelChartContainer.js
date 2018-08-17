@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import ChartCard from "../components/ChartCard";
+import ChartCard from "../presenters/ChartCard";
 import moment from "moment";
 
 const formatLoads = loads => {

@@ -26,6 +26,3 @@ render(
   document.getElementById("root")
 );
 registerServiceWorker();
-
-// WITHOUT REDUX
-// ReactDOM.render(<App />, document.getElementById('root'));

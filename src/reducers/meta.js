@@ -11,9 +11,8 @@ const meta = (state = {session_id: ''}, action) => {
     case "FETCH_SESSION_ID":
       return handle(state, action, {
         success: () => {
-          debugger;
           // TODO: update when inspections list is scoped
-          return state
+          return state;
         }
       });
 

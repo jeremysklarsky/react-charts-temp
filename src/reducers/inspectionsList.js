@@ -14,4 +14,11 @@ const inspectionsList = (state = [], action) => {
   }
 };
 
+// Selectors
+export const activeInspections = ({ inspectionsList }) => {
+  return inspectionsList.map((inpsection, i) => {
+    return { key: i, text: inpsection.uuid, value: inpsection.uuid };
+  });
+}
+
 export default inspectionsList;
